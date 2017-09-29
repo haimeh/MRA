@@ -2131,8 +2131,11 @@ SUBROUTINE VA09AD(FUNCT,N,X,F,G,H,W,DFN,EPS,MODE,MAXFN,IPRINT,IEXIT)
         DO 5 I = 1,N
           DO 6 J = 1,I
             IJ = IJ - 1
-    6     H(IJ) = 0.0D0
-    5   H(IJ) = 1.0D0
+            H(IJ) = 0.0D0
+    6     CONTINUE     
+          H(IJ) = 1.0D0
+    5   CONTINUE   
+	    
         GO TO 15
    10   CONTINUE
         CALL MC11BD(H,N,IR)
@@ -2159,12 +2162,15 @@ SUBROUTINE VA09AD(FUNCT,N,X,F,G,H,W,DFN,EPS,MODE,MAXFN,IPRINT,IEXIT)
    21   CONTINUE
         ITN = ITN + 1
         DO 22 I = 1,N
-   22   W(IG+I) = G(I)
+          W(IG+I) = G(I)
+   22   CONTINUE
         CALL MC11ED(H,N,G,W,IR)
         GS = 0.0D0
         DO 29 I = 1,N
           W(IS+I) = -G(I)
-   29   GS = GS - G(I)*W(IG+I)
+          GS = GS - G(I)*W(IG+I)
+   29   CONTINUE
+        
         IEXIT = 2
         IF (GS.GE.0.0D0) GO TO 92
         GS0 = GS
@@ -2181,12 +2187,16 @@ SUBROUTINE VA09AD(FUNCT,N,X,F,G,H,W,DFN,EPS,MODE,MAXFN,IPRINT,IEXIT)
         DO 31 I = 1,N
           Z = ALPHA*W(IS+I)
           IF (ABS(Z).GE.EPS(I)) ICON = 1
-   31   X(I) = X(I) + Z
+          X(I) = X(I) + Z
+   31   CONTINUE
+        
         CALL FUNCT(N,X,FY,G)
         IFN = IFN + 1
         GYS = 0.0D0
         DO 32 I = 1,N
-   32   GYS = GYS + G(I)*W(IS+I)
+          GYS = GYS + G(I)*W(IS+I)
+   32   CONTINUE
+        
         IF (FY.GE.F) GO TO 40
         IF (ABS(GYS/GS0).LE..9D0) GO TO 50
         IF (GYS.GT.0.0D0) GO TO 40
@@ -2200,7 +2210,8 @@ SUBROUTINE VA09AD(FUNCT,N,X,F,G,H,W,DFN,EPS,MODE,MAXFN,IPRINT,IEXIT)
         GO TO 30
    40   CONTINUE
         DO 41 I = 1,N
-   41   X(I) = X(I) - ALPHA*W(IS+I)
+          X(I) = X(I) - ALPHA*W(IS+I)
+   41   CONTINUE
         IF (ICON.EQ.0) GO TO 92
         Z = 3.0D0* (F-FY)/ALPHA + GYS + GS
         ZZ = SQRT(Z**2-GS*GYS)
@@ -2216,14 +2227,16 @@ SUBROUTINE VA09AD(FUNCT,N,X,F,G,H,W,DFN,EPS,MODE,MAXFN,IPRINT,IEXIT)
         DGS = GYS - GS0
         DO 51 I = 1,N
           W(IGG+I) = G(I)
-   51   G(I) = -W(IG+I)
+          G(I) = -W(IG+I)
+   51   CONTINUE
         IF (DGS+ALPHA*GS0.GT.0.0D0) GO TO 60
         SIG = 1.0D0/GS0
         IR = -IR
         
         CALL MC11AD(H,N,G,SIG,W,IR,One,ZeroD)
         DO 52 I = 1,N
-   52   G(I) = W(IGG+I) - W(IG+I)
+          G(I) = W(IGG+I) - W(IG+I)
+   52   CONTINUE
         SIG = 1.0D0/ (ALPHA*DGS)
         IR = -IR
         CALL MC11AD(H,N,G,SIG,W,IR,Zero,ZeroD)
@@ -2234,16 +2247,19 @@ SUBROUTINE VA09AD(FUNCT,N,X,F,G,H,W,DFN,EPS,MODE,MAXFN,IPRINT,IEXIT)
         CALL MC11AD(H,N,G,SIG,W,IR,One,EPSMCH)
         Z = DGS*ZZ - 1.0D0
         DO 61 I = 1,N
-   61   G(I) = W(IGG+I) + Z*W(IG+I)
+          G(I) = W(IGG+I) + Z*W(IG+I)
+   61   CONTINUE
         SIG = 1.0D0/ (ZZ*DGS**2)
         CALL MC11AD(H,N,G,SIG,W,IR,Zero,ZeroD)
    70   CONTINUE
         DO 71 I = 1,N
-   71   G(I) = W(IGG+I)
+          G(I) = W(IGG+I)
+   71   CONTINUE
         GO TO 20
    92   CONTINUE
         DO 91 I = 1,N
-   91   G(I) = W(IG+I)
+          G(I) = W(IG+I)
+   91   CONTINUE
    90   CONTINUE
 !       Trent added the following line so that number of function evaluations is returned. 
 !       Careful: this means MAXFN must be a variable in the calling routine, using constant, like 1000, will not work.   
@@ -2344,11 +2360,13 @@ SUBROUTINE MC11AD(A,N,Z,SIG,W,IR,MK,EPS)
       IF (MK.EQ.0) GO TO 10
       DO 7 I = 1,N
         IF (A(IJ).NE.0.0D0) TI = TI + W(I)**2/A(IJ)
-    7 IJ = IJ + NP - I
+        IJ = IJ + NP - I
+    7 CONTINUE
       GO TO 20
    10 CONTINUE
       DO 11 I = 1,N
-   11 W(I) = Z(I)
+        W(I) = Z(I)
+   11 CONTINUE
       DO 15 I = 1,N
         IP = I + 1
         V = W(I)
@@ -2361,13 +2379,18 @@ SUBROUTINE MC11AD(A,N,Z,SIG,W,IR,MK,EPS)
         IF (I.EQ.N) GO TO 14
         DO 13 J = IP,N
           IJ = IJ + 1
-   13   W(J) = W(J) - V*A(IJ)
+          W(J) = W(J) - V*A(IJ)
+   13   CONTINUE
    14   IJ = IJ + 1
    15 CONTINUE
    20 CONTINUE
       IF (IR.LE.0) GO TO 21
       IF (TI.GT.0.0D0) GO TO 22
-      IF (MK-1) 40,40,23
+      IF ((MK-1).GT.0.0D0) THEN
+        GO TO 23
+      ELSE 
+        GO TO 40
+      END IF
    21 TI = 0.D0
       IR = -IR - 1
       GO TO 23
@@ -2381,7 +2404,8 @@ SUBROUTINE MC11AD(A,N,Z,SIG,W,IR,MK,EPS)
         IJ = IJ - I
         IF (A(IJ).NE.0.0D0) TIM = TI - W(J)**2/A(IJ)
         W(J) = TI
-   30 TI = TIM
+        TI = TIM
+   30 CONTINUE
       GO TO 41
    40 CONTINUE
       MM = 0
@@ -2398,7 +2422,8 @@ SUBROUTINE MC11AD(A,N,Z,SIG,W,IR,MK,EPS)
         IF (I.EQ.N) RETURN
         DO 51 J = IP,N
           IJ = IJ + 1
-   51   A(IJ) = Z(J)/V
+          A(IJ) = Z(J)/V
+   51   CONTINUE
         RETURN
    52   CONTINUE
         TI = TIM
@@ -2406,7 +2431,11 @@ SUBROUTINE MC11AD(A,N,Z,SIG,W,IR,MK,EPS)
         GO TO 66
    53   CONTINUE
         AL = V/A(IJ)
-        IF (MM) 54,54,55
+        IF (MM.GT.0.0D0) THEN
+          GO TO 55
+        ELSE
+          GO TO 54
+        END IF
    54   TI = TIM + V*AL
         GO TO 56
    55   TI = W(I)
@@ -2420,14 +2449,16 @@ SUBROUTINE MC11AD(A,N,Z,SIG,W,IR,MK,EPS)
         DO 61 J = IP,N
           IJ = IJ + 1
           Z(J) = Z(J) - V*A(IJ)
-   61   A(IJ) = A(IJ) + B*Z(J)
+          A(IJ) = A(IJ) + B*Z(J)
+   61   CONTINUE
         GO TO 64
    62   GM = TIM/TI
         DO 63 J = IP,N
           IJ = IJ + 1
           Y = A(IJ)
           A(IJ) = B*Z(J) + Y*GM
-   63   Z(J) = Z(J) - V*Y
+          Z(J) = Z(J) - V*Y
+   63   CONTINUE
    64   CONTINUE
         TIM = TI
         IJ = IJ + 1
@@ -2491,8 +2522,10 @@ SUBROUTINE MC11BD(A,N,IR)
           V = A(IJ)/AA
           DO 102 IK = IJ,NI
             A(JK) = A(JK) - A(IK)*V
-  102     JK = JK + 1
-  103   A(IJ) = V
+            JK = JK + 1
+  102     CONTINUE
+          A(IJ) = V
+  103   CONTINUE
   104 CONTINUE
       IF (A(II).GT.0.0D0) RETURN
       A(II) = 0.D0
@@ -2527,15 +2560,18 @@ SUBROUTINE MC11CD(A,N)
         IP = II + 1
         IF (AA.GT.0.0D0) GO TO 203
         DO 204 IJ = IP,NI
-  204   A(IJ) = 0.D0
+          A(IJ) = 0.D0
+  204   CONTINUE
         GO TO 202
   203   CONTINUE
         DO 201 IJ = IP,NI
           V = A(IJ)*AA
           DO 200 IK = IJ,NI
             A(JK) = A(JK) + A(IK)*V
-  200     JK = JK + 1
-  201   A(IJ) = V
+            JK = JK + 1
+  200     CONTINUE
+          A(IJ) = V
+  201   CONTINUE
   202 CONTINUE
       RETURN
 end subroutine
@@ -2577,9 +2613,11 @@ SUBROUTINE MC11ED(A,N,Z,W,IR)
         V = Z(I)
         DO 401 J = 1,I1
           V = V - A(IJ)*Z(J)
-  401   IJ = IJ + N - J
+          IJ = IJ + N - J
+  401   CONTINUE
         W(I) = V
-  402 Z(I) = V
+        Z(I) = V
+  402 CONTINUE
       Z(N) = Z(N)/A(IJ)
       NP = N + 1
       DO 411 NIP = 2,N
@@ -2590,8 +2628,10 @@ SUBROUTINE MC11ED(A,N,Z,W,IR)
         IJ = II
         DO 410 J = IP,N
           II = II + 1
-  410   V = V - A(II)*Z(J)
-  411 Z(I) = V
+          V = V - A(II)*Z(J)
+  410   CONTINUE
+      Z(I) = V
+  411 CONTINUE
       RETURN
 end subroutine
 
@@ -2625,9 +2665,11 @@ SUBROUTINE MC11FD(A,N,IR)
           DO 500 K = I,J
             JK = JK + NP - K
             V = V + A(IK)*A(JK)
-  500     IK = IK + 1
+            IK = IK + 1
+  500     CONTINUE
           A(IJ) = -V
-  501   IJ = IJ + 1
+          IJ = IJ + 1
+  501   CONTINUE
   502   CONTINUE
         A(IJ) = 1.0D0/A(IJ)
         II = IJ + 1
@@ -2635,7 +2677,7 @@ SUBROUTINE MC11FD(A,N,IR)
         IJ = I
         IP = I + 1
         NI = N - I
-        DO 511 J = 2,I
+        DO 509 J = 2,I
           V = A(IJ)*AA
           IK = IJ
           K = IJ - IP + J
@@ -2643,9 +2685,12 @@ SUBROUTINE MC11FD(A,N,IR)
           NIP = NI + IJ
           DO 510 JK = K,I1
             A(JK) = A(JK) + V*A(IK)
-  510     IK = IK + NIP - JK
+            IK = IK + NIP - JK
+  510     CONTINUE
           A(IJ) = V
-  511 IJ = IJ + NP - J
+          IJ = IJ + NP - J
+  509   CONTINUE
+  511 CONTINUE
       RETURN
 end subroutine
 
@@ -4160,10 +4205,10 @@ SUBROUTINE svdcmp_dp(a,w,v,m,n)
     USE nrutil, ONLY : outerprod
     USE nr, ONLY : pythag
     IMPLICIT NONE
+    integer :: i,its,j,k,l,m,n,nm
     double precision, DIMENSION(m,n), INTENT(INOUT) :: a
     double precision, DIMENSION(n), INTENT(OUT) :: w
     double precision, DIMENSION(m,n), INTENT(OUT) :: v
-    integer :: i,its,j,k,l,m,n,nm
     double precision :: anorm,c,f,g,h,s,scale,x,y,z
     double precision, DIMENSION(m) :: tempm
     double precision, DIMENSION(n) :: rv1,tempn
@@ -4397,7 +4442,7 @@ implicit none
 !            write(logfile,*) "Number of Groups=", ng
 !    end if
     CHIGT=0.0
-    IDFGT=0
+    IDFGT=0.0
 
 
     DO L = 1, NG
