@@ -4637,9 +4637,9 @@ implicit none
     ! Print total chi-squared and variance inflation factor
     IF (IDFGT > 0) THEN
         VIF=CHIGT/IDFGT
-        VIF=MAX(VIF,1.0)
+        VIF=MAX(VIF,1.0D0)
     ELSE
-        VIF=1.0
+        VIF=1.0D0
     ENDIF
 
 !    if (trace /= 0) WRITE(logfile,9050) CHIGT,IDFGT,VIF
