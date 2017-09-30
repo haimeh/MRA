@@ -5,7 +5,7 @@ import(stats)
 import(graphics)
 importFrom("utils","packageDescription")
 
-useDynLib(mra)
+useDynLib(mra, .registration = TRUE)
 
 export(F.3d.model.matrix)
 export(F.cr.model.matrix)
