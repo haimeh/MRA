@@ -1,8 +1,8 @@
 Package: mra
 Type: Package
-Title: Analysis of Mark-Recapture Data
-Version: 2.16.8
-Date: 2017-09-30
+Title: Mark-Recapture Analysis
+Version: 2.16.9
+Date: 2017-10-01
 Authors@R: c(
   person("Trent", "McDonald", email="tmcdonald@west-inc.com", role=c("cre","aut")), 
   person("Eric", "Regehr", email="eric_regehr@fws.gov", role=c("ctb")), 
@@ -12,7 +12,8 @@ Author: Trent McDonald [cre, aut],
   Eric Regehr [ctb],
   Jeff Bromaghin [ctb]
 Maintainer: Trent McDonald <tmcdonald@west-inc.com>
-Description: Analysis of mark-recapture data using covariates. Models: CJS open population; Huggin's closed population. Link functions: logit, sine, hazard.  Model selection and model averaging routines. Plot methods. Simulation routine. CJS methods produce estimates of population size using the Horvitz-Thompson estimator.
+Description: This package accomplishes mark-recapture analysis with covariates. Models available include the Cormack-Jolly-Seber open population (Cormack (1972) <doi:10.2307/2556151>; Jolly (1965) <doi:10.2307/2333826>; Seber (1965) <doi:10.2307/2333827>) and Huggin's (1989) <doi:10.2307/2336377> closed population. 
+	Link functions include logit, sine, and hazard.  Model selection, model averaging, plot, and simulation routines included. Open population size by the Horvitz-Thompson (1959) <doi:10.2307/2280784> estimator.
 License: GNU General Public License
 BugReports: https://github.com/tmcd82070/MRA/issues
 Imports: stats, graphics
